@@ -1,9 +1,227 @@
-@import 'tailwindcss';
+:root {
+    --sidebar-width: 255px;
+    --sidebar-bg: #102944;
+    --sidebar-hover: #183b61;
+    --primary: #0d6efd;
+    --page-bg: #f5f7fb;
+}
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+body {
+    margin: 0;
+    background: var(--page-bg);
+    font-family: Inter, Arial, Helvetica, sans-serif;
+    color: #1f2937;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+a {
+    text-decoration: none;
+}
+
+/* LOGIN */
+
+.login-page {
+    min-height: 100vh;
+    background:
+        linear-gradient(
+            135deg,
+            #102944 0%,
+            #1267aa 100%
+        );
+}
+
+.login-side {
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 5rem;
+}
+
+.login-side h1 {
+    font-size: 3.3rem;
+    font-weight: 700;
+}
+
+.login-card {
+    border: 0;
+    border-radius: 18px;
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, .18);
+}
+
+
+/* APP */
+
+.app-wrapper {
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-height: 100vh;
+    background: var(--sidebar-bg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: white;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    padding: 22px 20px;
+    font-weight: 700;
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+}
+
+.sidebar-brand small {
+    display: block;
+    font-size: .72rem;
+    font-weight: normal;
+    opacity: .65;
+}
+
+.sidebar-menu {
+    padding: 14px 10px;
+}
+
+.sidebar-heading {
+    padding: 12px 14px 6px;
+    text-transform: uppercase;
+    font-size: .68rem;
+    letter-spacing: .08rem;
+    color: #93a7bd;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #dbeafe;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    font-size: .92rem;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background: var(--primary);
+    color: white;
+}
+
+.main-content {
+    width:
+        calc(
+            100% - var(--sidebar-width)
+        );
+
+    margin-left:
+        var(--sidebar-width);
+}
+
+.topbar {
+    height: 70px;
+    background: white;
+    border-bottom:
+        1px solid #e5e7eb;
+    padding: 0 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.page-content {
+    padding: 28px;
+}
+
+.page-title {
+    font-weight: 700;
+}
+
+.dashboard-card,
+.table-card,
+.stat-card {
+    border: 0;
+    border-radius: 14px;
+    box-shadow:
+        0 2px 14px
+        rgba(0,0,0,.05);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.4rem;
+}
+
+.table-card {
+    overflow: hidden;
+}
+
+.table-card table {
+    margin-bottom: 0;
+}
+
+.table-card th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.form-card {
+    border: 0;
+    border-radius: 14px;
+    box-shadow:
+        0 2px 14px
+        rgba(0,0,0,.05);
+}
+
+.required::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-closed {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.status-upcoming {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+@media (
+    max-width: 992px
+) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .page-content {
+        padding: 18px;
+    }
 }
