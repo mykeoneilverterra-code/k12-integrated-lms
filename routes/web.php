@@ -11,7 +11,18 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Teacher\AnnouncementController;
+use App\Http\Controllers\Teacher\AssignmentController;
+use App\Http\Controllers\Teacher\AttendanceController;
+use App\Http\Controllers\Teacher\ClassController;
+use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
+use App\Http\Controllers\Teacher\GradeController;
+use App\Http\Controllers\Teacher\LessonController;
+use App\Http\Controllers\Teacher\QuizController;
+use App\Http\Controllers\Teacher\QuizQuestionController;
+use App\Http\Controllers\Teacher\SubmissionController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -173,19 +184,338 @@ Route::middleware([
     'auth',
     'role:teacher'
 ])
-    ->get(
-        '/teacher/dashboard',
-        fn () => '<h1>Teacher Dashboard - Phase 3</h1>'
-    )
-    ->name('teacher.dashboard');
+    ->prefix('teacher')
+    ->name('teacher.')
+    ->group(function () {
+
+        Route::get(
+            '/dashboard',
+            [
+                TeacherDashboardController::class,
+                'index'
+            ]
+        )->name('dashboard');
 
 
-Route::middleware([
-    'auth',
-    'role:student'
-])
-    ->get(
-        '/student/dashboard',
-        fn () => '<h1>Student Dashboard - Phase 4</h1>'
-    )
-    ->name('student.dashboard');
+        Route::get(
+            '/classes',
+            [
+                ClassController::class,
+                'index'
+            ]
+        )->name('classes.index');
+
+
+        Route::get(
+            '/classes/{classSubject}',
+            [
+                ClassController::class,
+                'show'
+            ]
+        )->name('classes.show');
+
+
+        Route::get(
+            '/classes/{classSubject}/students',
+            [
+                ClassController::class,
+                'students'
+            ]
+        )->name('classes.students');
+
+
+        /*
+        | Lessons
+        */
+
+        Route::get(
+            '/classes/{classSubject}/lessons',
+            [
+                LessonController::class,
+                'index'
+            ]
+        )->name('lessons.index');
+
+        Route::get(
+            '/classes/{classSubject}/lessons/create',
+            [
+                LessonController::class,
+                'create'
+            ]
+        )->name('lessons.create');
+
+        Route::post(
+            '/classes/{classSubject}/lessons',
+            [
+                LessonController::class,
+                'store'
+            ]
+        )->name('lessons.store');
+
+        Route::get(
+            '/classes/{classSubject}/lessons/{lesson}/edit',
+            [
+                LessonController::class,
+                'edit'
+            ]
+        )->name('lessons.edit');
+
+        Route::put(
+            '/classes/{classSubject}/lessons/{lesson}',
+            [
+                LessonController::class,
+                'update'
+            ]
+        )->name('lessons.update');
+
+        Route::delete(
+            '/classes/{classSubject}/lessons/{lesson}',
+            [
+                LessonController::class,
+                'destroy'
+            ]
+        )->name('lessons.destroy');
+
+
+        /*
+        | Assignments
+        */
+
+        Route::get(
+            '/classes/{classSubject}/assignments',
+            [
+                AssignmentController::class,
+                'index'
+            ]
+        )->name('assignments.index');
+
+        Route::get(
+            '/classes/{classSubject}/assignments/create',
+            [
+                AssignmentController::class,
+                'create'
+            ]
+        )->name('assignments.create');
+
+        Route::post(
+            '/classes/{classSubject}/assignments',
+            [
+                AssignmentController::class,
+                'store'
+            ]
+        )->name('assignments.store');
+
+        Route::get(
+            '/classes/{classSubject}/assignments/{assignment}/edit',
+            [
+                AssignmentController::class,
+                'edit'
+            ]
+        )->name('assignments.edit');
+
+        Route::put(
+            '/classes/{classSubject}/assignments/{assignment}',
+            [
+                AssignmentController::class,
+                'update'
+            ]
+        )->name('assignments.update');
+
+        Route::delete(
+            '/classes/{classSubject}/assignments/{assignment}',
+            [
+                AssignmentController::class,
+                'destroy'
+            ]
+        )->name('assignments.destroy');
+
+
+        Route::get(
+            '/classes/{classSubject}/assignments/{assignment}/submissions',
+            [
+                SubmissionController::class,
+                'index'
+            ]
+        )->name('submissions.index');
+
+        Route::put(
+            '/classes/{classSubject}/assignments/{assignment}/submissions/{submission}',
+            [
+                SubmissionController::class,
+                'update'
+            ]
+        )->name('submissions.update');
+
+
+        /*
+        | Quizzes
+        */
+
+        Route::get(
+            '/classes/{classSubject}/quizzes',
+            [
+                QuizController::class,
+                'index'
+            ]
+        )->name('quizzes.index');
+
+        Route::get(
+            '/classes/{classSubject}/quizzes/create',
+            [
+                QuizController::class,
+                'create'
+            ]
+        )->name('quizzes.create');
+
+        Route::post(
+            '/classes/{classSubject}/quizzes',
+            [
+                QuizController::class,
+                'store'
+            ]
+        )->name('quizzes.store');
+
+        Route::get(
+            '/classes/{classSubject}/quizzes/{quiz}',
+            [
+                QuizController::class,
+                'show'
+            ]
+        )->name('quizzes.show');
+
+        Route::get(
+            '/classes/{classSubject}/quizzes/{quiz}/edit',
+            [
+                QuizController::class,
+                'edit'
+            ]
+        )->name('quizzes.edit');
+
+        Route::put(
+            '/classes/{classSubject}/quizzes/{quiz}',
+            [
+                QuizController::class,
+                'update'
+            ]
+        )->name('quizzes.update');
+
+        Route::delete(
+            '/classes/{classSubject}/quizzes/{quiz}',
+            [
+                QuizController::class,
+                'destroy'
+            ]
+        )->name('quizzes.destroy');
+
+
+        Route::post(
+            '/classes/{classSubject}/quizzes/{quiz}/questions',
+            [
+                QuizQuestionController::class,
+                'store'
+            ]
+        )->name('questions.store');
+
+        Route::delete(
+            '/classes/{classSubject}/quizzes/{quiz}/questions/{question}',
+            [
+                QuizQuestionController::class,
+                'destroy'
+            ]
+        )->name('questions.destroy');
+
+
+        /*
+        | Attendance
+        */
+
+        Route::get(
+            '/classes/{classSubject}/attendance',
+            [
+                AttendanceController::class,
+                'index'
+            ]
+        )->name('attendance.index');
+
+        Route::post(
+            '/classes/{classSubject}/attendance',
+            [
+                AttendanceController::class,
+                'store'
+            ]
+        )->name('attendance.store');
+
+
+        /*
+        | Grades
+        */
+
+        Route::get(
+            '/classes/{classSubject}/grades',
+            [
+                GradeController::class,
+                'index'
+            ]
+        )->name('grades.index');
+
+        Route::post(
+            '/classes/{classSubject}/grades',
+            [
+                GradeController::class,
+                'store'
+            ]
+        )->name('grades.store');
+
+
+        /*
+        | Announcements
+        */
+
+        Route::get(
+            '/classes/{classSubject}/announcements',
+            [
+                AnnouncementController::class,
+                'index'
+            ]
+        )->name('announcements.index');
+
+        Route::get(
+            '/classes/{classSubject}/announcements/create',
+            [
+                AnnouncementController::class,
+                'create'
+            ]
+        )->name('announcements.create');
+
+        Route::post(
+            '/classes/{classSubject}/announcements',
+            [
+                AnnouncementController::class,
+                'store'
+            ]
+        )->name('announcements.store');
+
+        Route::get(
+            '/classes/{classSubject}/announcements/{announcement}/edit',
+            [
+                AnnouncementController::class,
+                'edit'
+            ]
+        )->name('announcements.edit');
+
+        Route::put(
+            '/classes/{classSubject}/announcements/{announcement}',
+            [
+                AnnouncementController::class,
+                'update'
+            ]
+        )->name('announcements.update');
+
+        Route::delete(
+            '/classes/{classSubject}/announcements/{announcement}',
+            [
+                AnnouncementController::class,
+                'destroy'
+            ]
+        )->name('announcements.destroy');
+    });

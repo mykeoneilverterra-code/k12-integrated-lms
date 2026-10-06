@@ -132,6 +132,37 @@ class ClassAssignmentController extends Controller
     public function destroy(
         ClassSubject $class_assignment
     ) {
+        if (
+            $class_assignment
+                ->lessons()
+                ->exists()
+            ||
+            $class_assignment
+                ->assignments()
+                ->exists()
+            ||
+            $class_assignment
+                ->quizzes()
+                ->exists()
+            ||
+            $class_assignment
+                ->attendanceRecords()
+                ->exists()
+            ||
+            $class_assignment
+                ->quarterlyGrades()
+                ->exists()
+            ||
+            $class_assignment
+                ->announcements()
+                ->exists()
+        ) {
+            return back()->with(
+                'error',
+                'This class already contains LMS records and cannot be deleted.'
+            );
+        }
+
         $class_assignment->delete();
 
         return back()->with(

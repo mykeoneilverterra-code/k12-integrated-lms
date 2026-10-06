@@ -35,4 +35,32 @@ class Enrollment extends Model
     {
         return $this->belongsTo(Section::class);
     }
+
+    public function assignmentSubmissions()
+    {
+        return $this->hasMany(
+            AssignmentSubmission::class
+        );
+    }
+
+    public function quizAttempts()
+    {
+        return $this->hasMany(
+            QuizAttempt::class
+        );
+    }
+
+    public function attendanceRecords()
+    {
+        return $this->hasMany(
+            AttendanceRecord::class
+        );
+    }
+
+    public function quarterlyGrades()
+    {
+        return $this->hasMany(
+            QuarterlyGrade::class
+        );
+    }
 }
