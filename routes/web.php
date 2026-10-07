@@ -21,6 +21,13 @@ use App\Http\Controllers\Teacher\LessonController;
 use App\Http\Controllers\Teacher\QuizController;
 use App\Http\Controllers\Teacher\QuizQuestionController;
 use App\Http\Controllers\Teacher\SubmissionController;
+use App\Http\Controllers\Student\AnnouncementController as StudentAnnouncementController;
+use App\Http\Controllers\Student\AssignmentController as StudentAssignmentController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\GradeController as StudentGradeController;
+use App\Http\Controllers\Student\LessonController as StudentLessonController;
+use App\Http\Controllers\Student\QuizController as StudentQuizController;
+use App\Http\Controllers\Student\SubjectController as StudentSubjectController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -518,4 +525,130 @@ Route::middleware([
                 'destroy'
             ]
         )->name('announcements.destroy');
+    });
+
+    Route::middleware([
+    'auth',
+    'role:student',
+])
+    ->prefix('student')
+    ->name('student.')
+    ->group(function () {
+
+        Route::get(
+            '/dashboard',
+            [
+                StudentDashboardController::class,
+                'index'
+            ]
+        )->name('dashboard');
+
+        Route::get(
+            '/subjects',
+            [
+                StudentSubjectController::class,
+                'index'
+            ]
+        )->name('subjects.index');
+
+        Route::get(
+            '/subjects/{classSubject}',
+            [
+                StudentSubjectController::class,
+                'show'
+            ]
+        )->name('subjects.show');
+
+
+        Route::get(
+            '/subjects/{classSubject}/lessons',
+            [
+                StudentLessonController::class,
+                'index'
+            ]
+        )->name('lessons.index');
+
+        Route::get(
+            '/subjects/{classSubject}/lessons/{lesson}',
+            [
+                StudentLessonController::class,
+                'show'
+            ]
+        )->name('lessons.show');
+
+
+        Route::get(
+            '/subjects/{classSubject}/assignments',
+            [
+                StudentAssignmentController::class,
+                'index'
+            ]
+        )->name('assignments.index');
+
+        Route::get(
+            '/subjects/{classSubject}/assignments/{assignment}',
+            [
+                StudentAssignmentController::class,
+                'show'
+            ]
+        )->name('assignments.show');
+
+        Route::post(
+            '/subjects/{classSubject}/assignments/{assignment}/submit',
+            [
+                StudentAssignmentController::class,
+                'submit'
+            ]
+        )->name('assignments.submit');
+
+
+        Route::get(
+            '/subjects/{classSubject}/quizzes',
+            [
+                StudentQuizController::class,
+                'index'
+            ]
+        )->name('quizzes.index');
+
+        Route::get(
+            '/subjects/{classSubject}/quizzes/{quiz}/take',
+            [
+                StudentQuizController::class,
+                'take'
+            ]
+        )->name('quizzes.take');
+
+        Route::post(
+            '/subjects/{classSubject}/quizzes/{quiz}/submit',
+            [
+                StudentQuizController::class,
+                'submit'
+            ]
+        )->name('quizzes.submit');
+
+        Route::get(
+            '/subjects/{classSubject}/quizzes/{quiz}/result',
+            [
+                StudentQuizController::class,
+                'result'
+            ]
+        )->name('quizzes.result');
+
+
+        Route::get(
+            '/grades',
+            [
+                StudentGradeController::class,
+                'index'
+            ]
+        )->name('grades.index');
+
+
+        Route::get(
+            '/announcements',
+            [
+                StudentAnnouncementController::class,
+                'index'
+            ]
+        )->name('announcements.index');
     });
