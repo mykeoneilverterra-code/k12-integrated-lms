@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -11,203 +12,404 @@
     >
 
     <title>
-        @yield('title', 'Student')
-        | K-12 LMS
+        @yield('title', 'Student') | K-12 LMS
     </title>
 
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+
     @vite([
+        'resources/css/app.css',
         'resources/js/app.js'
     ])
 
 </head>
 
+
 <body>
 
-<div class="app-wrapper">
 
-    <aside class="sidebar">
+@php
 
-        <div class="sidebar-brand">
+    $user = auth()->user();
 
-            <i class="bi bi-house-door-fill me-2"></i>
+    $studentName =
+        $user->name
+        ?? 'Student';
 
-            K-12 LMS
+    $studentNameParts =
+        preg_split(
+            '/\s+/',
+            trim($studentName)
+        );
 
-            <small>
-                Elementary Student
-            </small>
+    $studentInitials = '';
+
+    if (!empty($studentNameParts)) {
+
+        $studentInitials =
+            strtoupper(
+                mb_substr(
+                    $studentNameParts[0],
+                    0,
+                    1
+                )
+            );
+
+        if (count($studentNameParts) > 1) {
+
+            $studentInitials .=
+                strtoupper(
+                    mb_substr(
+                        end($studentNameParts),
+                        0,
+                        1
+                    )
+                );
+
+        }
+
+    }
+
+    if (!$studentInitials) {
+        $studentInitials = 'ST';
+    }
+
+@endphp
+
+
+
+<div class="k12-app">
+
+
+    <div class="k12-sidebar-overlay"></div>
+
+
+
+    {{-- =====================================================
+         SIDEBAR
+    ====================================================== --}}
+
+    <aside class="k12-sidebar">
+
+
+        <div class="k12-sidebar-brand">
+
+
+            <div class="k12-sidebar-logo">
+
+                <i class="bi bi-book-fill"></i>
+
+            </div>
+
+
+            <div>
+
+                <h2>
+                    K-12 LMS
+                </h2>
+
+                <small>
+                    Elementary Student
+                </small>
+
+            </div>
+
 
         </div>
 
 
-        <nav class="sidebar-menu">
 
-            <div class="sidebar-heading">
-                Overview
-            </div>
+        <div class="k12-sidebar-section">
+            OVERVIEW
+        </div>
 
 
-            <a
-                href="{{ route('student.dashboard') }}"
-                class="{{
-                    request()->routeIs(
-                        'student.dashboard'
-                    )
-                    ? 'active'
-                    : ''
-                }}"
-            >
-                <i class="bi bi-grid"></i>
+        <a
+            href="{{ url('/student/dashboard') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/dashboard') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-house-fill"></i>
+
+            <span>
                 Dashboard
-            </a>
+            </span>
+
+        </a>
 
 
-            <a
-                href="{{ route('student.subjects.index') }}"
-                class="{{
-                    request()->routeIs(
-                        'student.subjects.*'
-                    )
-                    ? 'active'
-                    : ''
-                }}"
-            >
-                <i class="bi bi-journal-bookmark"></i>
+        <a
+            href="{{ url('/student/subjects') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/subjects*') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-book-fill"></i>
+
+            <span>
                 My Subjects
-            </a>
+            </span>
+
+        </a>
 
 
-            <a
-                href="{{ route('student.grades.index') }}"
-                class="{{
-                    request()->routeIs(
-                        'student.grades.*'
-                    )
-                    ? 'active'
-                    : ''
-                }}"
-            >
-                <i class="bi bi-award"></i>
+        <a
+            href="{{ url('/student/grades') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/grades*') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-award-fill"></i>
+
+            <span>
                 My Grades
-            </a>
+            </span>
+
+        </a>
 
 
-            <a
-                href="{{ route('student.announcements.index') }}"
-                class="{{
-                    request()->routeIs(
-                        'student.announcements.*'
-                    )
-                    ? 'active'
-                    : ''
-                }}"
-            >
-                <i class="bi bi-megaphone"></i>
+        <a
+            href="{{ url('/student/assignments') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/assignments*') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-clipboard-check"></i>
+
+            <span>
+                Assignments
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url('/student/quizzes') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/quizzes*') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-question-square"></i>
+
+            <span>
+                Quizzes
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url('/student/lessons') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/lessons*') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-file-earmark-text"></i>
+
+            <span>
+                Lessons
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url('/student/announcements') }}"
+            class="
+                k12-sidebar-link
+                {{ request()->is('student/announcements*') ? 'active' : '' }}
+            "
+        >
+
+            <i class="bi bi-megaphone-fill"></i>
+
+            <span>
                 Announcements
-            </a>
+            </span>
 
-        </nav>
+        </a>
+
 
     </aside>
 
 
-    <main class="main-content">
 
-        <header class="topbar">
+    {{-- =====================================================
+         MAIN
+    ====================================================== --}}
 
-            <strong>
-                @yield(
-                    'page-title',
-                    'Student'
-                )
-            </strong>
+    <div class="k12-main">
 
 
-            <div class="d-flex align-items-center gap-3">
+        <header class="k12-topbar">
 
-                <i class="bi bi-bell"></i>
 
-                <div class="text-end">
+            <div class="k12-topbar-left">
 
-                    <div class="fw-semibold">
-                        {{ auth()->user()->name }}
+
+                <button
+                    type="button"
+                    class="k12-sidebar-toggle"
+                    data-sidebar-toggle
+                >
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+
+                <div class="k12-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        placeholder="Search anything..."
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="k12-topbar-profile">
+
+
+                <button
+                    type="button"
+                    class="k12-notification-button"
+                >
+
+                    <i class="bi bi-bell"></i>
+
+                </button>
+
+
+                <div class="k12-avatar">
+
+                    {{ $studentInitials }}
+
+                </div>
+
+
+                <div>
+
+                    <div class="k12-profile-name">
+
+                        {{ $studentName }}
+
                     </div>
 
-                    <small class="text-muted">
+                    <div class="k12-profile-role">
                         Student
-                    </small>
+                    </div>
 
                 </div>
 
 
                 <form
                     method="POST"
-                    action="{{ route('logout') }}"
+                    action="{{ url('/logout') }}"
                 >
+
                     @csrf
 
                     <button
-                        class="btn btn-sm btn-outline-danger"
+                        type="submit"
+                        class="k12-logout-button"
                     >
+
+                        <i class="bi bi-box-arrow-right"></i>
+
                         Logout
+
                     </button>
 
                 </form>
 
+
             </div>
+
 
         </header>
 
 
-        <section class="page-content">
 
-            @if(session('success'))
+        <main class="k12-content">
 
-                <div class="alert alert-success">
+
+            @if (session('success'))
+
+                <div
+                    class="alert alert-success alert-dismissible fade show"
+                >
+
                     {{ session('success') }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                    ></button>
+
                 </div>
 
             @endif
 
 
-            @if(session('error'))
 
-                <div class="alert alert-danger">
+            @if (session('error'))
+
+                <div
+                    class="alert alert-danger alert-dismissible fade show"
+                >
+
                     {{ session('error') }}
-                </div>
 
-            @endif
-
-
-            @if($errors->any())
-
-                <div class="alert alert-danger">
-
-                    @foreach(
-                        $errors->all()
-                        as $error
-                    )
-
-                        <div>
-                            {{ $error }}
-                        </div>
-
-                    @endforeach
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                    ></button>
 
                 </div>
 
             @endif
+
 
 
             @yield('content')
 
-        </section>
 
-    </main>
+        </main>
+
+
+    </div>
+
 
 </div>
 
-@stack('scripts')
 
 </body>
+
 </html>

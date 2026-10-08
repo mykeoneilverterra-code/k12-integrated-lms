@@ -1,9 +1,26 @@
 import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import Chart from 'chart.js/auto';
+document.addEventListener('DOMContentLoaded', () => {
 
-window.Chart = Chart;
+    const sidebar = document.querySelector('.k12-sidebar');
+    const overlay = document.querySelector('.k12-sidebar-overlay');
+    const toggle = document.querySelector('[data-sidebar-toggle]');
 
-import '../css/app.css';
+    if (toggle && sidebar) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+
+            if (overlay) {
+                overlay.classList.toggle('show');
+            }
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar?.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+    }
+
+});

@@ -1,219 +1,709 @@
 @extends('layouts.teacher')
 
-@section(
-    'title',
-    'Dashboard'
-)
 
-@section(
-    'page-title',
-    'Teacher Dashboard'
-)
+@section('title', 'Teacher Dashboard')
+
 
 @section('content')
 
-<div class="mb-4">
 
-    <h2 class="page-title">
-        Teacher Dashboard
-    </h2>
+@php
 
-    <p class="text-muted">
-        Welcome,
-        {{
-            $teacher->full_name
-        }}!
-    </p>
+    /*
+    |--------------------------------------------------------------------------
+    | MY CLASSES
+    |--------------------------------------------------------------------------
+    |
+    | Safe handling:
+    | if controller sends Collection/array -> use it
+    | if controller sends count/int -> do not foreach it
+    |
+    */
 
-</div>
+    $teacherClassesSource =
+        $myClasses
+        ?? $classes
+        ?? [];
+
+    $teacherClasses =
+        is_iterable($teacherClassesSource)
+            ? collect($teacherClassesSource)
+            : collect();
 
 
-<div class="row g-4 mb-4">
+    /*
+    |--------------------------------------------------------------------------
+    | CLASS COUNT
+    |--------------------------------------------------------------------------
+    */
 
-    <div class="col-md-4">
+    if (isset($myClassesCount) && is_numeric($myClassesCount)) {
 
-        <div class="card stat-card">
+        $classTotal =
+            (int) $myClassesCount;
 
-            <div class="card-body">
+    } elseif (isset($classCount) && is_numeric($classCount)) {
 
-                <h2>
-                    {{ $classes->count() }}
-                </h2>
+        $classTotal =
+            (int) $classCount;
 
-                <span class="text-muted">
-                    My Classes
-                </span>
+    } elseif (
+        isset($myClasses) &&
+        is_numeric($myClasses)
+    ) {
 
-            </div>
+        $classTotal =
+            (int) $myClasses;
 
-        </div>
+    } else {
+
+        $classTotal =
+            $teacherClasses->count();
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STUDENT COUNT
+    |--------------------------------------------------------------------------
+    */
+
+    $studentTotal = 0;
+
+    if (
+        isset($totalStudents) &&
+        is_numeric($totalStudents)
+    ) {
+
+        $studentTotal =
+            (int) $totalStudents;
+
+    } elseif (
+        isset($studentCount) &&
+        is_numeric($studentCount)
+    ) {
+
+        $studentTotal =
+            (int) $studentCount;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPCOMING ACTIVITIES
+    |--------------------------------------------------------------------------
+    |
+    | Your current controller appears to send $upcomingActivities
+    | as INTEGER, e.g. 2.
+    |
+    | Therefore:
+    | - numeric = use as count
+    | - iterable = use as actual activity list
+    |
+    */
+
+    $activityItems =
+        collect();
+
+    $activityTotal = 0;
+
+
+    if (isset($upcomingActivities)) {
+
+        if (
+            is_array($upcomingActivities) ||
+            $upcomingActivities instanceof \Traversable
+        ) {
+
+            $activityItems =
+                collect($upcomingActivities);
+
+            $activityTotal =
+                $activityItems->count();
+
+        } elseif (
+            is_numeric($upcomingActivities)
+        ) {
+
+            $activityTotal =
+                (int) $upcomingActivities;
+
+        }
+
+    }
+
+
+    if (
+        isset($upcomingActivitiesCount) &&
+        is_numeric($upcomingActivitiesCount)
+    ) {
+
+        $activityTotal =
+            (int) $upcomingActivitiesCount;
+
+    }
+
+
+    if (
+        isset($upcomingCount) &&
+        is_numeric($upcomingCount)
+    ) {
+
+        $activityTotal =
+            (int) $upcomingCount;
+
+    }
+
+@endphp
+
+
+
+{{-- =========================================================
+     TEACHER BANNER
+========================================================= --}}
+
+<section class="k12-dashboard-banner">
+
+
+    <div class="k12-dashboard-banner-fallback">
+
+        <small>
+            TEACHER DASHBOARD
+        </small>
+
+        <h1>
+            Welcome back, Teacher!
+        </h1>
+
+        <p>
+            Here's an overview of your classes.
+        </p>
 
     </div>
 
 
-    <div class="col-md-4">
-
-        <div class="card stat-card">
-
-            <div class="card-body">
-
-                <h2>
-                    {{ $totalStudents }}
-                </h2>
-
-                <span class="text-muted">
-                    Total Students
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
+    <img
+        src="{{ asset('images/ui/banners/teacher-banner.png') }}"
+        alt=""
+        onerror="this.remove();"
+    >
 
 
-    <div class="col-md-4">
+</section>
 
-        <div class="card stat-card">
 
-            <div class="card-body">
 
-                <h2>
-                    {{
-                        $upcomingActivities
-                    }}
-                </h2>
+{{-- =========================================================
+     STATS
+========================================================= --}}
 
-                <span class="text-muted">
-                    Upcoming Activities
-                </span>
+<section class="k12-stats-grid three">
 
-            </div>
+
+    <div class="k12-stat-card">
+
+
+        <div class="k12-stat-icon blue">
+
+            <i class="bi bi-people-fill"></i>
 
         </div>
 
-    </div>
 
-</div>
+        <div>
 
+            <h2 class="k12-stat-value">
 
-<div class="card dashboard-card">
+                {{ $classTotal }}
 
-    <div class="card-body">
+            </h2>
 
-        <div
-            class="d-flex
-            justify-content-between
-            align-items-center
-            mb-3"
-        >
-
-            <h4 class="mb-0">
+            <div class="k12-stat-title">
                 My Classes
-            </h4>
+            </div>
+
+            <div class="k12-stat-subtitle">
+                Total classes assigned
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="k12-stat-card">
+
+
+        <div class="k12-stat-icon green">
+
+            <i class="bi bi-person-fill"></i>
+
+        </div>
+
+
+        <div>
+
+            <h2 class="k12-stat-value">
+
+                {{ $studentTotal }}
+
+            </h2>
+
+            <div class="k12-stat-title">
+                Total Students
+            </div>
+
+            <div class="k12-stat-subtitle">
+                Students across classes
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="k12-stat-card">
+
+
+        <div class="k12-stat-icon yellow">
+
+            <i class="bi bi-calendar-event-fill"></i>
+
+        </div>
+
+
+        <div>
+
+            <h2 class="k12-stat-value">
+
+                {{ $activityTotal }}
+
+            </h2>
+
+            <div class="k12-stat-title">
+                Upcoming Activities
+            </div>
+
+            <div class="k12-stat-subtitle">
+                Assignments and quizzes
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+{{-- =========================================================
+     LOWER DASHBOARD
+========================================================= --}}
+
+<section class="k12-teacher-grid">
+
+
+    {{-- MY CLASSES --}}
+
+    <div class="k12-panel">
+
+
+        <div class="k12-panel-header">
+
+
+            <div>
+
+                <h2 class="k12-panel-title">
+                    My Classes
+                </h2>
+
+                <div class="k12-panel-subtitle">
+                    Your currently assigned classes
+                </div>
+
+            </div>
+
 
             <a
-                href="{{
-                    route(
-                        'teacher.classes.index'
-                    )
-                }}"
+                href="{{ url('/teacher/classes') }}"
+                class="k12-panel-link"
             >
+
                 View All
+
             </a>
+
 
         </div>
 
 
-        <div class="row g-3">
 
-            @forelse (
-                $classes
-                as $class
-            )
-
-                <div class="col-lg-6">
-
-                    <div
-                        class="border
-                        rounded p-3"
-                    >
-
-                        <h5>
-
-                            {{
-                                $class
-                                ->section
-                                ->gradeLevel
-                                ->name
-                            }}
-
-                            -
-
-                            {{
-                                $class
-                                ->section
-                                ->name
-                            }}
-
-                        </h5>
+        <div class="k12-panel-body">
 
 
-                        <p class="mb-1">
-
-                            {{
-                                $class
-                                ->subject
-                                ->name
-                            }}
-
-                        </p>
+            @if ($teacherClasses->isNotEmpty())
 
 
-                        <small
-                            class="text-muted"
+                <div class="k12-class-list">
+
+
+                    @foreach ($teacherClasses as $class)
+
+
+                        @php
+
+                            $classId =
+                                data_get(
+                                    $class,
+                                    'id'
+                                );
+
+
+                            $subjectName =
+                                data_get(
+                                    $class,
+                                    'subject.name'
+                                )
+                                ?? data_get(
+                                    $class,
+                                    'subject_name'
+                                )
+                                ?? 'Subject';
+
+
+                            $gradeName =
+                                data_get(
+                                    $class,
+                                    'section.gradeLevel.name'
+                                )
+                                ?? data_get(
+                                    $class,
+                                    'section.grade_level.name'
+                                )
+                                ?? '';
+
+
+                            $sectionName =
+                                data_get(
+                                    $class,
+                                    'section.name'
+                                )
+                                ?? '';
+
+
+                            $classStudents =
+                                data_get(
+                                    $class,
+                                    'students_count'
+                                )
+                                ?? data_get(
+                                    $class,
+                                    'section.enrollments_count'
+                                )
+                                ?? 0;
+
+                        @endphp
+
+
+
+                        <a
+                            href="{{ $classId ? url('/teacher/classes/' . $classId) : '#' }}"
+                            class="k12-class-row"
                         >
-                            {{
-                                $class
-                                ->students_count
-                            }}
-                            Students
-                        </small>
 
-                        <div class="mt-3">
 
-                            <a
-                                href="{{
-                                    route(
-                                        'teacher.classes.show',
-                                        $class
-                                    )
-                                }}"
-                                class="btn
-                                btn-sm
-                                btn-primary"
-                            >
-                                View Class
-                            </a>
+                            <div class="k12-class-icon">
 
-                        </div>
+                                <i class="bi bi-calculator"></i>
 
-                    </div>
+                            </div>
+
+
+
+                            <div class="k12-class-info">
+
+
+                                <div class="k12-class-name">
+
+                                    {{ $subjectName }}
+
+                                </div>
+
+
+                                <div class="k12-class-meta">
+
+                                    @if ($gradeName)
+
+                                        {{ $gradeName }}
+
+                                    @endif
+
+
+                                    @if ($sectionName)
+
+                                        @if ($gradeName)
+                                            -
+                                        @endif
+
+                                        {{ $sectionName }}
+
+                                    @endif
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="k12-class-count">
+
+                                {{ $classStudents }}
+
+                                <small>
+
+                                    {{ $classStudents == 1 ? 'student' : 'students' }}
+
+                                </small>
+
+                            </div>
+
+
+                        </a>
+
+
+                    @endforeach
+
 
                 </div>
 
-            @empty
 
-                <p class="text-muted">
-                    No classes assigned.
-                </p>
+            @else
 
-            @endforelse
+
+                <div class="k12-empty-state">
+
+
+                    <img
+                        src="{{ asset('images/ui/decorations/decorative-learning.png') }}"
+                        class="k12-empty-image"
+                        alt=""
+                        onerror="this.remove();"
+                    >
+
+
+                    <h4>
+                        No classes assigned yet
+                    </h4>
+
+
+                    <p>
+                        Classes assigned by the administrator
+                        will automatically appear here.
+                    </p>
+
+
+                </div>
+
+
+            @endif
+
 
         </div>
 
+
     </div>
 
-</div>
+
+
+    {{-- UPCOMING ACTIVITIES --}}
+
+    <div class="k12-panel">
+
+
+        <div class="k12-panel-header">
+
+
+            <div>
+
+                <h2 class="k12-panel-title">
+                    Upcoming Activities
+                </h2>
+
+                <div class="k12-panel-subtitle">
+                    Assignments and quizzes
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="k12-panel-body">
+
+
+            {{-- IMPORTANT:
+                 Only loop if we really have iterable activity records.
+            --}}
+
+            @if ($activityItems->isNotEmpty())
+
+
+                <div class="k12-class-list">
+
+
+                    @foreach ($activityItems as $activity)
+
+
+                        @php
+
+                            $activityTitle =
+                                data_get(
+                                    $activity,
+                                    'title'
+                                )
+                                ?? 'Activity';
+
+
+                            $activityDate =
+                                data_get(
+                                    $activity,
+                                    'due_at'
+                                )
+                                ?? data_get(
+                                    $activity,
+                                    'due_date'
+                                )
+                                ?? data_get(
+                                    $activity,
+                                    'start_at'
+                                )
+                                ?? null;
+
+                        @endphp
+
+
+
+                        <div class="k12-class-row">
+
+
+                            <div class="k12-class-icon">
+
+                                <i class="bi bi-calendar-event"></i>
+
+                            </div>
+
+
+                            <div class="k12-class-info">
+
+
+                                <div class="k12-class-name">
+
+                                    {{ $activityTitle }}
+
+                                </div>
+
+
+                                <div class="k12-class-meta">
+
+                                    @if ($activityDate)
+
+                                        {{ $activityDate }}
+
+                                    @else
+
+                                        Upcoming activity
+
+                                    @endif
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    @endforeach
+
+
+                </div>
+
+
+            @else
+
+
+                <div class="k12-empty-state">
+
+
+                    <i
+                        class="bi bi-calendar-check"
+                        style="
+                            font-size:34px;
+                            margin-bottom:12px;
+                            color:#96afd0;
+                        "
+                    ></i>
+
+
+                    @if ($activityTotal > 0)
+
+
+                        <h4>
+                            {{ $activityTotal }}
+                            upcoming
+                            {{ $activityTotal == 1 ? 'activity' : 'activities' }}
+                        </h4>
+
+
+                        <p>
+                            The dashboard received the activity count,
+                            but no detailed activity collection was
+                            provided by the controller.
+                        </p>
+
+
+                    @else
+
+
+                        <h4>
+                            No upcoming activities
+                        </h4>
+
+
+                        <p>
+                            Upcoming assignments and quizzes
+                            will appear here.
+                        </p>
+
+
+                    @endif
+
+
+                </div>
+
+
+            @endif
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
 
 @endsection
